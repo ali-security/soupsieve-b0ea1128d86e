@@ -140,9 +140,17 @@ class TestHas(util.TestCase):
         )
 
     def test_has_empty(self):
-        """Test has with empty slot due to multiple commas."""
+        """Test has with empty slot due to no selectors."""
 
         self.assert_raises('div:has()', SelectorSyntaxError)
+        self.assert_raises('div:has(,a)', SelectorSyntaxError)
+        self.assert_raises('div:has(a,)', SelectorSyntaxError)
+        self.assert_raises('div:has(a,,a)', SelectorSyntaxError)
+
+    def test_has_excessive_empty_slots(self):
+        """Test that `:has()` does not accept an unbounded number of empty comma slots."""
+
+        self.assert_raises('div:has({}a)'.format(',' * 10000), SelectorSyntaxError)
 
     def test_invalid_incomplete_has(self):
         """Test `:has()` fails with just a combinator."""
